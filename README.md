@@ -17,6 +17,12 @@ flutter pub get
 flutter run
 ```
 
+Para usar a importacao por link do C.R.I.S., informe a chave em tempo de build:
+
+```bash
+flutter run --dart-define=CRIS_FIREBASE_API_KEY=sua_chave
+```
+
 ## Rodar testes
 
 ```bash

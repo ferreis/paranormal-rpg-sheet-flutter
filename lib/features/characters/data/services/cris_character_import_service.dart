@@ -5,20 +5,28 @@ import 'package:http/http.dart' as http;
 import '../models/character_sheet.dart';
 
 class CrisCharacterImportService {
-  CrisCharacterImportService({http.Client? httpClient})
-    : httpClient = httpClient ?? http.Client();
+  CrisCharacterImportService({
+    http.Client? httpClient,
+    this.apiKey = const String.fromEnvironment('CRIS_FIREBASE_API_KEY'),
+  }) : httpClient = httpClient ?? http.Client();
 
   static const String _projectId = 'cris-ordem-paranormal';
-  static const String _apiKey = 'AIzaSyADXkE6U5j_hlSRxK3nfqyylmPXgUeGWsQ';
 
   final http.Client httpClient;
+  final String apiKey;
 
   Future<CharacterSheet> importFromUrl(String crisUrl) async {
+    if (apiKey.trim().isEmpty) {
+      throw StateError(
+        'Configure CRIS_FIREBASE_API_KEY para importar fichas do C.R.I.S.',
+      );
+    }
+
     final String characterId = extractCharacterId(crisUrl);
     final Uri firestoreUri = Uri.https(
       'firestore.googleapis.com',
       '/v1/projects/$_projectId/databases/(default)/documents/characters/$characterId',
-      <String, String>{'key': _apiKey},
+      <String, String>{'key': apiKey},
     );
 
     final http.Response response = await httpClient.get(firestoreUri);

@@ -18,6 +18,19 @@ void main() {
     );
   });
 
+  test('exige chave configurada para importar ficha pela API do C.R.I.S.', () {
+    final CrisCharacterImportService importService = CrisCharacterImportService(
+      apiKey: '',
+    );
+
+    expect(
+      () => importService.importFromUrl(
+        'https://crisordemparanormal.com/agente/zCHWUGicLBWO4MFkXRU1',
+      ),
+      throwsStateError,
+    );
+  });
+
   test('converte documento Firestore do C.R.I.S. em ficha local', () {
     final CrisCharacterImportService importService =
         CrisCharacterImportService();
