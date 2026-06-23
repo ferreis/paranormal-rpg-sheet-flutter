@@ -19,6 +19,7 @@ class CharacterImportExportPage extends StatefulWidget {
 
 class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
   final TextEditingController jsonController = TextEditingController();
+  final TextEditingController crisUrlController = TextEditingController();
   bool isLoading = false;
   String? message;
 
@@ -31,6 +32,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
   @override
   void dispose() {
     jsonController.dispose();
+    crisUrlController.dispose();
     super.dispose();
   }
 
@@ -94,6 +96,42 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
     }
   }
 
+  Future<void> _importCrisUrl() async {
+    setState(() {
+      isLoading = true;
+      message = null;
+    });
+
+    try {
+      await widget.repository.importCharacterFromCrisUrl(
+        crisUrlController.text,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message = 'Ficha C.R.I.S. importada.';
+      });
+    } catch (exception) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message =
+            'Nao foi possivel importar do C.R.I.S. Verifique se o link e publico.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isExportMode = widget.characterId != null;
@@ -109,6 +147,25 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
             if (isLoading) const LinearProgressIndicator(),
             if (message != null) ...<Widget>[
               Text(message!),
+              const SizedBox(height: 8),
+            ],
+            if (!isExportMode) ...<Widget>[
+              TextField(
+                controller: crisUrlController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Link da ficha C.R.I.S.',
+                  hintText: 'https://crisordemparanormal.com/agente/...',
+                ),
+              ),
+              const SizedBox(height: 8),
+              FilledButton.icon(
+                onPressed: isLoading ? null : _importCrisUrl,
+                icon: const Icon(Icons.link),
+                label: const Text('Importar do C.R.I.S.'),
+              ),
+              const SizedBox(height: 16),
+              const Divider(),
               const SizedBox(height: 8),
             ],
             TextField(

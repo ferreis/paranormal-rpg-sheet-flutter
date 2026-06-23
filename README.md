@@ -7,6 +7,8 @@ App Flutter offline para criar, calcular e consultar fichas de RPG de Ordem Para
 - Flutter 3.44.x
 - Dart 3.12.x
 - Android
+- SQLite local com `sqflite`
+- Importacao online opcional via link publico do C.R.I.S.
 
 ## Rodar localmente
 
@@ -35,7 +37,8 @@ flutter test
 - `lib/features/characters/data/repositories/character_repository.dart`: acesso ao banco.
 - `lib/features/characters/domain/services/character_calculation_service.dart`: calculos automaticos.
 - `lib/features/characters/presentation/controllers/character_editor_controller.dart`: estado da edicao e auto-save.
-- `lib/features/characters/presentation/pages/`: telas de lista, detalhe, formulario, edicao e JSON.
+- `lib/features/characters/data/services/cris_character_import_service.dart`: importacao de ficha publica do C.R.I.S.
+- `lib/features/characters/presentation/pages/`: telas de lista, detalhe, formulario, edicao, JSON e importacao C.R.I.S.
 - `lib/features/characters/presentation/widgets/`: campos, cards, seletor de atributo e status de salvamento.
 
 ## Banco SQLite
@@ -61,11 +64,11 @@ Regras:
 
 ## Telas
 
-- `CharacterListPage`: lista fichas, busca por nome, cria, duplica, exclui e importa JSON.
+- `CharacterListPage`: lista fichas, busca por nome, cria, duplica, exclui e abre importacoes.
 - `CharacterFormPage`: formulario editavel com abas.
 - `CharacterDetailPage`: resumo da ficha e acoes principais.
 - `CharacterEditPage`: entrada dedicada para edicao.
-- `CharacterImportExportPage`: importacao e exportacao por JSON.
+- `CharacterImportExportPage`: importacao/exportacao por JSON e importacao por link C.R.I.S.
 
 ## Funcionalidades implementadas
 
@@ -78,8 +81,14 @@ Regras:
 - Auto-save com indicador de status.
 - Exportar ficha em JSON.
 - Importar ficha por JSON.
+- Importar ficha publica do C.R.I.S. por link.
 - Adicionar pericia, arma, item, ritual, poder, habilidade, anotacao e historico.
 - Organizar a ficha por abas.
+
+Observacao:
+
+- A importacao C.R.I.S. busca dados publicos da ficha e salva no SQLite local.
+- Descricoes longas de regras, itens, poderes e rituais nao sao importadas automaticamente.
 
 ## Calculos automaticos
 
@@ -96,6 +105,7 @@ Regras:
 - `flutter test`
   - calculos automaticos;
   - repository com SQLite em arquivo temporario;
+  - conversao de ficha C.R.I.S. para o modelo local;
   - salvar, reabrir, listar, duplicar, exportar, importar e excluir ficha;
   - exclusao em cascata dos dados dependentes.
 - `flutter build apk --debug`

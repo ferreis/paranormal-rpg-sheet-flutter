@@ -65,11 +65,15 @@ void main() {
           .saveCharacter(
             loadedCharacter.copyWith(
               characterName: 'Agente Atualizado',
-              lifeCurrent: 7,
+              clearLifeCurrent: true,
+              clearSanityCurrent: true,
+              clearEffortCurrent: true,
             ),
           );
       expect(updatedCharacter.characterName, 'Agente Atualizado');
-      expect(updatedCharacter.lifeCurrent, 7);
+      expect(updatedCharacter.lifeCurrent, 0);
+      expect(updatedCharacter.sanityCurrent, 0);
+      expect(updatedCharacter.effortCurrent, 0);
 
       final List<CharacterSheet> searchResult = await reopenedRepository
           .listCharacters(searchTerm: 'Atualizado');

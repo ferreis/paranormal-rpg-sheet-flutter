@@ -5,17 +5,21 @@ import 'package:sqflite/sqflite.dart';
 import '../../../../core/database/app_database.dart';
 import '../../domain/services/character_calculation_service.dart';
 import '../models/character_sheet.dart';
+import '../services/cris_character_import_service.dart';
 
 class CharacterRepository {
   CharacterRepository({
     AppDatabase? appDatabase,
     CharacterCalculationService? calculationService,
+    CrisCharacterImportService? crisImportService,
   }) : _appDatabase = appDatabase ?? AppDatabase.instance,
        _calculationService =
-           calculationService ?? CharacterCalculationService();
+           calculationService ?? CharacterCalculationService(),
+       _crisImportService = crisImportService ?? CrisCharacterImportService();
 
   final AppDatabase _appDatabase;
   final CharacterCalculationService _calculationService;
+  final CrisCharacterImportService _crisImportService;
 
   Future<List<CharacterSheet>> listCharacters({String searchTerm = ''}) async {
     final Database database = await _appDatabase.database;
@@ -257,6 +261,13 @@ class CharacterRepository {
     );
 
     return createCharacter(CharacterSheet.fromJson(jsonMap));
+  }
+
+  Future<CharacterSheet> importCharacterFromCrisUrl(String crisUrl) async {
+    final CharacterSheet importedCharacter = await _crisImportService
+        .importFromUrl(crisUrl);
+
+    return createCharacter(importedCharacter);
   }
 
   Future<List<ChildModel>> _loadChildren<ChildModel>({

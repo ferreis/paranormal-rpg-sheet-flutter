@@ -55,4 +55,22 @@ void main() {
     expect(calculatedSheet.lifeMaximum, 99);
     expect(calculatedSheet.defense, 33);
   });
+
+  test('permite reduzir recursos atuais para zero', () {
+    final CharacterCalculationService calculationService =
+        CharacterCalculationService();
+
+    final CharacterSheet characterSheet = CharacterSheet.empty().copyWith(
+      clearLifeCurrent: true,
+      clearSanityCurrent: true,
+      clearEffortCurrent: true,
+    );
+
+    final CharacterSheet calculatedSheet = calculationService
+        .applyAutomaticValues(characterSheet);
+
+    expect(calculatedSheet.lifeCurrent, 0);
+    expect(calculatedSheet.sanityCurrent, 0);
+    expect(calculatedSheet.effortCurrent, 0);
+  });
 }
