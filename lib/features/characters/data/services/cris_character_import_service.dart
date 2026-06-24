@@ -11,22 +11,18 @@ class CrisCharacterImportService {
   }) : httpClient = httpClient ?? http.Client();
 
   static const String _projectId = 'cris-ordem-paranormal';
+  static const String _publicWebApiKey =
+      'AIzaSyADXkE6U5j_hlSRxK3nfqyylmPXgUeGWsQ';
 
   final http.Client httpClient;
   final String apiKey;
 
   Future<CharacterSheet> importFromUrl(String crisUrl) async {
-    if (apiKey.trim().isEmpty) {
-      throw StateError(
-        'Configure CRIS_FIREBASE_API_KEY para importar fichas do C.R.I.S.',
-      );
-    }
-
     final String characterId = extractCharacterId(crisUrl);
     final Uri firestoreUri = Uri.https(
       'firestore.googleapis.com',
       '/v1/projects/$_projectId/databases/(default)/documents/characters/$characterId',
-      <String, String>{'key': apiKey},
+      <String, String>{'key': _resolvedApiKey},
     );
 
     final http.Response response = await httpClient.get(firestoreUri);
@@ -38,7 +34,7 @@ class CrisCharacterImportService {
     final Object? decodedBody = jsonDecode(response.body);
 
     if (decodedBody is! Map) {
-      throw const FormatException('Resposta invalida do C.R.I.S.');
+      throw const FormatException('Resposta inválida do C.R.I.S.');
     }
 
     return characterSheetFromFirestoreDocument(
@@ -69,7 +65,17 @@ class CrisCharacterImportService {
       return normalizedInput;
     }
 
-    throw const FormatException('Link C.R.I.S. invalido.');
+    throw const FormatException('Link C.R.I.S. inválido.');
+  }
+
+  String get _resolvedApiKey {
+    final String configuredApiKey = apiKey.trim();
+
+    if (configuredApiKey.isNotEmpty) {
+      return configuredApiKey;
+    }
+
+    return _publicWebApiKey;
   }
 
   CharacterSheet characterSheetFromFirestoreDocument(

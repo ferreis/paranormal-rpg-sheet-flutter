@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:ordem_fichas/features/characters/data/services/cris_character_import_service.dart';
 
 void main() {
@@ -18,17 +22,28 @@ void main() {
     );
   });
 
-  test('exige chave configurada para importar ficha pela API do C.R.I.S.', () {
+  test('importa ficha do C.R.I.S. sem exigir API key configurada', () async {
+    Uri? requestedUri;
     final CrisCharacterImportService importService = CrisCharacterImportService(
       apiKey: '',
+      httpClient: MockClient((http.Request request) async {
+        requestedUri = request.url;
+
+        return http.Response(jsonEncode(_firestoreDocument()), 200);
+      }),
     );
 
-    expect(
-      () => importService.importFromUrl(
-        'https://crisordemparanormal.com/agente/zCHWUGicLBWO4MFkXRU1',
-      ),
-      throwsStateError,
+    final characterSheet = await importService.importFromUrl(
+      'https://crisordemparanormal.com/agente/zCHWUGicLBWO4MFkXRU1',
     );
+
+    expect(characterSheet.characterName, 'Fernando Severino');
+    expect(requestedUri?.host, 'firestore.googleapis.com');
+    expect(
+      requestedUri?.path,
+      '/v1/projects/cris-ordem-paranormal/databases/(default)/documents/characters/zCHWUGicLBWO4MFkXRU1',
+    );
+    expect(requestedUri?.queryParameters['key'], isNotEmpty);
   });
 
   test('converte documento Firestore do C.R.I.S. em ficha local', () {

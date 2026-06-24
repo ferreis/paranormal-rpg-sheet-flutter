@@ -17,10 +17,10 @@ flutter pub get
 flutter run
 ```
 
-Para usar a importação por link do C.R.I.S., informe a chave em tempo de build:
+Para importar por link do C.R.I.S., cole o link público da ficha no app.
 
 ```bash
-flutter run --dart-define=CRIS_FIREBASE_API_KEY=sua_chave
+https://crisordemparanormal.com/agente/id-da-ficha
 ```
 
 ## Rodar testes
