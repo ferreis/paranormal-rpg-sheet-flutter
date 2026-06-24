@@ -1,16 +1,23 @@
+import 'dart:io';
+
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 
+import '../../data/models/character_sheet.dart';
 import '../../data/repositories/character_repository.dart';
+import '../../data/services/character_file_export_service.dart';
 
 class CharacterImportExportPage extends StatefulWidget {
-  const CharacterImportExportPage({
+  CharacterImportExportPage({
     required this.repository,
     this.characterId,
+    CharacterFileExportService? fileExportService,
     super.key,
-  });
+  }) : fileExportService = fileExportService ?? CharacterFileExportService();
 
   final CharacterRepository repository;
   final int? characterId;
+  final CharacterFileExportService fileExportService;
 
   @override
   State<CharacterImportExportPage> createState() =>
@@ -63,6 +70,24 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
     }
   }
 
+  Future<CharacterSheet> _loadCurrentCharacter() async {
+    final int? characterId = widget.characterId;
+
+    if (characterId == null) {
+      throw StateError('Ficha nao informada.');
+    }
+
+    final CharacterSheet? characterSheet = await widget.repository.getCharacter(
+      characterId,
+    );
+
+    if (characterSheet == null) {
+      throw StateError('Ficha nao encontrada.');
+    }
+
+    return characterSheet;
+  }
+
   Future<void> _importJson() async {
     setState(() {
       isLoading = true;
@@ -86,6 +111,57 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
 
       setState(() {
         message = 'JSON invalido ou incompleto.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _importFile() async {
+    setState(() {
+      isLoading = true;
+      message = null;
+    });
+
+    try {
+      const XTypeGroup characterFileType = XTypeGroup(
+        label: 'Ficha Ordem',
+        extensions: <String>['ordemficha', 'json'],
+      );
+      final XFile? selectedFile = await openFile(
+        acceptedTypeGroups: <XTypeGroup>[characterFileType],
+      );
+
+      if (selectedFile == null) {
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
+        return;
+      }
+
+      final String jsonContent = await selectedFile.readAsString();
+      await widget.repository.importCharacterFromJson(jsonContent);
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message = 'Arquivo importado.';
+      });
+    } catch (exception) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message = 'Nao foi possivel importar o arquivo.';
       });
     } finally {
       if (mounted) {
@@ -132,13 +208,116 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
     }
   }
 
+  Future<void> _openEditablePdf() async {
+    await _createPdf(shareAfterCreate: false);
+  }
+
+  Future<void> _shareEditablePdf() async {
+    await _createPdf(shareAfterCreate: true);
+  }
+
+  Future<void> _createPdf({required bool shareAfterCreate}) async {
+    setState(() {
+      isLoading = true;
+      message = null;
+    });
+
+    try {
+      final CharacterSheet characterSheet = await _loadCurrentCharacter();
+      final File pdfFile = await widget.fileExportService.createEditablePdfFile(
+        characterSheet,
+      );
+
+      if (shareAfterCreate) {
+        await widget.fileExportService.shareFile(
+          file: pdfFile,
+          subject: 'Ficha ${characterSheet.characterName}',
+          text: 'Ficha editavel em PDF.',
+        );
+      } else {
+        await widget.fileExportService.openFile(pdfFile);
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message = shareAfterCreate
+            ? 'PDF pronto para compartilhar.'
+            : 'PDF editavel gerado.';
+      });
+    } catch (exception) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message = 'Nao foi possivel gerar o PDF.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _shareCharacterFile() async {
+    setState(() {
+      isLoading = true;
+      message = null;
+    });
+
+    try {
+      final CharacterSheet characterSheet = await _loadCurrentCharacter();
+      final String jsonContent = jsonController.text.trim().isEmpty
+          ? await widget.repository.exportCharacterAsJson(widget.characterId!)
+          : jsonController.text;
+      final File characterFile = await widget.fileExportService
+          .createShareableCharacterFile(
+            characterName: characterSheet.characterName,
+            jsonContent: jsonContent,
+          );
+
+      await widget.fileExportService.shareFile(
+        file: characterFile,
+        subject: 'Ficha ${characterSheet.characterName}',
+        text: 'Arquivo para importar no app Fichas Ordem.',
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message = 'Ficha pronta para compartilhar.';
+      });
+    } catch (exception) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message = 'Nao foi possivel compartilhar a ficha.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isExportMode = widget.characterId != null;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isExportMode ? 'Exportar JSON' : 'Importar JSON'),
+        title: Text(isExportMode ? 'Exportar ficha' : 'Importar ficha'),
       ),
       body: SafeArea(
         child: ListView(
@@ -163,6 +342,34 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
                 onPressed: isLoading ? null : _importCrisUrl,
                 icon: const Icon(Icons.link),
                 label: const Text('Importar do C.R.I.S.'),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: isLoading ? null : _importFile,
+                icon: const Icon(Icons.file_open_outlined),
+                label: const Text('Importar arquivo recebido'),
+              ),
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 8),
+            ],
+            if (isExportMode) ...<Widget>[
+              FilledButton.icon(
+                onPressed: isLoading ? null : _openEditablePdf,
+                icon: const Icon(Icons.picture_as_pdf_outlined),
+                label: const Text('Gerar PDF editavel'),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: isLoading ? null : _shareEditablePdf,
+                icon: const Icon(Icons.ios_share_outlined),
+                label: const Text('Compartilhar PDF'),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: isLoading ? null : _shareCharacterFile,
+                icon: const Icon(Icons.bluetooth_outlined),
+                label: const Text('Compartilhar ficha do app'),
               ),
               const SizedBox(height: 16),
               const Divider(),

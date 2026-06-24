@@ -272,7 +272,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
                     ),
                     PopupMenuItem<String>(
                       value: 'export',
-                      child: Text('Exportar JSON'),
+                      child: Text('Exportar/compartilhar'),
                     ),
                     PopupMenuItem<String>(
                       value: 'delete',
@@ -649,7 +649,7 @@ class AttributeCircle extends StatelessWidget {
             children: <Widget>[
               Positioned.fill(
                 child: Image.asset(
-                  'attributes.png',
+                  'assets/images/attributes.png',
                   fit: BoxFit.contain,
                   color: Colors.white.withValues(alpha: 0.92),
                 ),
