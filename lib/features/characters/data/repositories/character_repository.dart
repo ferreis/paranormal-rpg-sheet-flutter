@@ -225,13 +225,13 @@ class CharacterRepository {
     final CharacterSheet? existingCharacter = await getCharacter(characterId);
 
     if (existingCharacter == null) {
-      throw StateError('Ficha nao encontrada para duplicar.');
+      throw StateError('Ficha não encontrada para duplicar.');
     }
 
     return createCharacter(
       existingCharacter.copyWith(
         clearId: true,
-        characterName: '${existingCharacter.characterName} - copia',
+        characterName: '${existingCharacter.characterName} - cópia',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       ),
@@ -242,7 +242,7 @@ class CharacterRepository {
     final CharacterSheet? characterSheet = await getCharacter(characterId);
 
     if (characterSheet == null) {
-      throw StateError('Ficha nao encontrada para exportar.');
+      throw StateError('Ficha não encontrada para exportar.');
     }
 
     return const JsonEncoder.withIndent('  ').convert(characterSheet.toJson());

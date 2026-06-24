@@ -12,22 +12,22 @@ class HomeScreen extends StatelessWidget {
     SheetArea(
       icon: Icons.insights_outlined,
       title: 'Atributos',
-      description: 'Forca, agilidade, intelecto, presenca e vigor.',
+      description: 'Força, agilidade, intelecto, presença e vigor.',
     ),
     SheetArea(
       icon: Icons.checklist_outlined,
-      title: 'Pericias',
-      description: 'Treinamento, bonus e testes calculados.',
+      title: 'Perícias',
+      description: 'Treinamento, bônus e testes calculados.',
     ),
     SheetArea(
       icon: Icons.shield_outlined,
       title: 'Combate',
-      description: 'PV, sanidade, PE, defesa, dano e resistencias.',
+      description: 'PV, sanidade, PE, defesa, dano e resistências.',
     ),
     SheetArea(
       icon: Icons.backpack_outlined,
-      title: 'Inventario',
-      description: 'Itens, armas, protecoes e carga.',
+      title: 'Inventário',
+      description: 'Itens, armas, proteções e carga.',
     ),
     SheetArea(
       icon: Icons.casino_outlined,
@@ -79,7 +79,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Modulos da ficha',
+              'Módulos da ficha',
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),

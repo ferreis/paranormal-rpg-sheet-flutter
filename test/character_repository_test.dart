@@ -82,7 +82,7 @@ void main() {
       final CharacterSheet duplicatedCharacter = await reopenedRepository
           .duplicateCharacter(savedCharacterId);
       expect(duplicatedCharacter.id, isNot(savedCharacterId));
-      expect(duplicatedCharacter.characterName, contains('copia'));
+      expect(duplicatedCharacter.characterName, contains('cópia'));
 
       final String exportedJson = await reopenedRepository
           .exportCharacterAsJson(savedCharacterId);
@@ -109,10 +109,10 @@ CharacterSheet _filledCharacterSheet() {
   return CharacterSheet.empty().copyWith(
     characterName: 'Agente Teste',
     playerName: 'Jogador Teste',
-    origin: 'Origem propria',
-    characterClass: 'Classe propria',
-    characterPath: 'Trilha propria',
-    rank: 'Patente propria',
+    origin: 'Origem própria',
+    characterClass: 'Classe própria',
+    characterPath: 'Trilha própria',
+    rank: 'Patente própria',
     exposureLevel: 20,
     attributes: CharacterAttributes.empty().copyWith(
       agility: 2,
@@ -128,14 +128,14 @@ CharacterSheet _filledCharacterSheet() {
     ],
     items: <CharacterItem>[
       CharacterItem.empty(
-        category: 'Protecao',
+        category: 'Proteção',
       ).copyWith(name: 'Colete', defenseBonus: 6),
       CharacterItem.empty().copyWith(name: 'Lanterna'),
     ],
     rituals: <CharacterRitual>[
       CharacterRitual.empty().copyWith(
         name: 'Ritual proprio',
-        description: 'Descricao livre do usuario.',
+        description: 'Descrição livre do usuário.',
       ),
     ],
     powers: <CharacterPower>[
@@ -145,15 +145,15 @@ CharacterSheet _filledCharacterSheet() {
       ),
       CharacterPower.empty(
         category: 'Habilidade',
-      ).copyWith(name: 'Habilidade propria'),
+      ).copyWith(name: 'Habilidade própria'),
     ],
     notes: <CharacterNote>[
       CharacterNote.empty(
         category: CharacterNoteCategory.general,
-      ).copyWith(title: 'Anotacao', content: 'Conteudo livre.'),
+      ).copyWith(title: 'Anotação', content: 'Conteúdo livre.'),
       CharacterNote.empty(
         category: CharacterNoteCategory.history,
-      ).copyWith(title: 'Historico', content: 'Historia propria.'),
+      ).copyWith(title: 'Histórico', content: 'História própria.'),
     ],
   );
 }

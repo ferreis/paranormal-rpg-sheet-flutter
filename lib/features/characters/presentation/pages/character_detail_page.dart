@@ -55,7 +55,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
       }
 
       setState(() {
-        errorMessage = 'Nao foi possivel carregar a ficha.';
+        errorMessage = 'Não foi possível carregar a ficha.';
       });
     } finally {
       if (mounted) {
@@ -214,7 +214,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
         }
 
         setState(() {
-          errorMessage = 'Nao foi possivel salvar a alteracao.';
+          errorMessage = 'Não foi possível salvar a alteração.';
         });
       }
     });
@@ -286,9 +286,9 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
             indicatorColor: Color(0xFFA347FF),
             tabs: <Widget>[
               Tab(text: 'Status'),
-              Tab(text: 'Pericias'),
+              Tab(text: 'Perícias'),
               Tab(text: 'Combate'),
-              Tab(text: 'Inventario'),
+              Tab(text: 'Inventário'),
               Tab(text: 'Extras'),
               Tab(text: 'Notas'),
             ],
@@ -307,7 +307,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
     final CharacterSheet? currentCharacterSheet = characterSheet;
 
     if (currentCharacterSheet == null) {
-      return Center(child: Text(errorMessage ?? 'Ficha nao encontrada.'));
+      return Center(child: Text(errorMessage ?? 'Ficha não encontrada.'));
     }
 
     return TabBarView(
@@ -548,7 +548,7 @@ class _StatusPanel extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          _InfoLine(label: 'PROTECAO', value: _protectionText(characterSheet)),
+          _InfoLine(label: 'PROTEÇÃO', value: _protectionText(characterSheet)),
           _InfoLine(
             label: 'RESISTENCIAS',
             value: _resistanceText(characterSheet),
@@ -598,7 +598,7 @@ class _StatusPanel extends StatelessWidget {
 
     if (weaponNotes.isEmpty) {
       return characterSheet.characterClass.isEmpty
-          ? 'Nao informado'
+          ? 'Não informado'
           : characterSheet.characterClass;
     }
 
@@ -951,7 +951,7 @@ class _SkillsTab extends StatelessWidget {
               initiallyExpanded: skill.notes.trim().isNotEmpty,
               lines: <String>[
                 'Treinamento: ${skill.training}',
-                'Bonus manual: ${skill.bonus}',
+                'Bônus manual: ${skill.bonus}',
                 skill.notes,
               ],
             ),
@@ -984,7 +984,7 @@ class _CombatTab extends StatelessWidget {
               lines: <String>[
                 'Ataque: ${weapon.attackBonus}',
                 'Dano: ${weapon.damage}',
-                'Critico: ${weapon.critical}',
+                'Crítico: ${weapon.critical}',
                 'Alcance: ${weapon.range}',
                 'Notas: ${weapon.notes}',
               ],
@@ -1019,7 +1019,7 @@ class _InventoryTab extends StatelessWidget {
                 'Categoria: ${item.category}',
                 'Quantidade: ${item.quantity}',
                 'Carga: ${item.weight}',
-                'Bonus de defesa: ${item.defenseBonus}',
+                'Bônus de defesa: ${item.defenseBonus}',
                 'Notas: ${item.notes}',
               ],
             ),
@@ -1052,7 +1052,7 @@ class _ExtrasTab extends StatelessWidget {
               lines: <String>[
                 'Categoria: ${power.category}',
                 power.description.trim().isEmpty
-                    ? 'Sem descricao cadastrada.'
+                    ? 'Sem descrição cadastrada.'
                     : power.description,
               ],
             ),
@@ -1070,7 +1070,7 @@ class _ExtrasTab extends StatelessWidget {
                 'Circulo: ${ritual.circle}',
                 'Custo: ${ritual.cost}',
                 ritual.description.trim().isEmpty
-                    ? 'Sem descricao cadastrada.'
+                    ? 'Sem descrição cadastrada.'
                     : ritual.description,
               ],
             ),
@@ -1095,7 +1095,7 @@ class _NotesTab extends StatelessWidget {
           const _PanelTitle('ANOTACOES E HISTORICO'),
           const SizedBox(height: 8),
           if (characterSheet.notes.isEmpty)
-            const _EmptyText('Nenhuma anotacao cadastrada.'),
+            const _EmptyText('Nenhuma anotação cadastrada.'),
           ...characterSheet.notes.map(
             (CharacterNote note) => _ExpandableDetailBlock(
               title: note.title.isEmpty ? note.category : note.title,
@@ -1393,7 +1393,7 @@ class _ExpandableDetailBlock extends StatelessWidget {
           iconColor: const Color(0xFFA347FF),
           collapsedIconColor: Colors.white54,
           title: Text(
-            title.trim().isEmpty ? 'Sem titulo' : title,
+            title.trim().isEmpty ? 'Sem título' : title,
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w900,
@@ -1424,7 +1424,7 @@ class _ExpandableDetailBlock extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Sem descricao cadastrada.',
+                      'Sem descrição cadastrada.',
                       style: TextStyle(color: Colors.white60),
                     ),
                   ),

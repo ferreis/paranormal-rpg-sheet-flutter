@@ -66,11 +66,11 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
               bottom: const TabBar(
                 isScrollable: true,
                 tabs: <Widget>[
-                  Tab(text: 'Identificacao'),
+                  Tab(text: 'Identificação'),
                   Tab(text: 'Atributos'),
                   Tab(text: 'Combate'),
-                  Tab(text: 'Pericias'),
-                  Tab(text: 'Inventario'),
+                  Tab(text: 'Perícias'),
+                  Tab(text: 'Inventário'),
                   Tab(text: 'Extras'),
                   Tab(text: 'Notas'),
                 ],
@@ -90,7 +90,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
 
     if (characterSheet == null) {
       return Center(
-        child: Text(controller.errorMessage ?? 'Ficha nao encontrada.'),
+        child: Text(controller.errorMessage ?? 'Ficha não encontrada.'),
       );
     }
 
@@ -110,7 +110,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
   List<Widget> _identificationFields(CharacterSheet characterSheet) {
     return <Widget>[
       SheetSectionCard(
-        title: 'Identificacao',
+        title: 'Identificação',
         children: <Widget>[
           StandardTextField(
             label: 'Nome do personagem',
@@ -161,7 +161,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Nivel de exposicao paranormal',
+            label: 'Nível de exposição paranormal',
             initialNumber: characterSheet.exposureLevel,
             allowNegative: false,
             onChanged: (int number) => controller.updateCharacter(
@@ -189,7 +189,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
         title: 'Atributos',
         children: <Widget>[
           AttributeSelector(
-            label: 'Forca',
+            label: 'Força',
             currentValue: characterSheet.attributes.strength,
             onChanged: (int number) => _updateAttributes(
               characterSheet.attributes.copyWith(strength: number),
@@ -210,7 +210,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           AttributeSelector(
-            label: 'Presenca',
+            label: 'Presença',
             currentValue: characterSheet.attributes.presence,
             onChanged: (int number) => _updateAttributes(
               characterSheet.attributes.copyWith(presence: number),
@@ -243,7 +243,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Vida maxima',
+            label: 'Vida máxima',
             initialNumber: characterSheet.lifeMaximum,
             allowNegative: false,
             onChanged: (int number) => controller.updateCharacter(
@@ -254,7 +254,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           _ManualSwitch(
-            title: 'Editar vida maxima manualmente',
+            title: 'Editar vida máxima manualmente',
             currentValue: characterSheet.useManualLifeMaximum,
             onChanged: (bool booleanValue) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -278,7 +278,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Bonus manual de vida',
+            label: 'Bônus manual de vida',
             initialNumber: characterSheet.lifeManualBonus,
             onChanged: (int number) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -300,7 +300,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Sanidade maxima',
+            label: 'Sanidade máxima',
             initialNumber: characterSheet.sanityMaximum,
             allowNegative: false,
             onChanged: (int number) => controller.updateCharacter(
@@ -311,7 +311,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           _ManualSwitch(
-            title: 'Editar sanidade maxima manualmente',
+            title: 'Editar sanidade máxima manualmente',
             currentValue: characterSheet.useManualSanityMaximum,
             onChanged: (bool booleanValue) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -327,7 +327,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Sanidade por presenca',
+            label: 'Sanidade por presença',
             initialNumber: characterSheet.sanityPerPresence,
             onChanged: (int number) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -335,7 +335,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Bonus manual de sanidade',
+            label: 'Bônus manual de sanidade',
             initialNumber: characterSheet.sanityManualBonus,
             onChanged: (int number) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -345,10 +345,10 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
         ],
       ),
       SheetSectionCard(
-        title: 'Esforco e defesa',
+        title: 'Esforço e defesa',
         children: <Widget>[
           StandardNumberField(
-            label: 'Esforco atual',
+            label: 'Esforço atual',
             initialNumber: characterSheet.effortCurrent,
             allowNegative: false,
             onChanged: (int number) => controller.updateCharacter(
@@ -357,7 +357,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Esforco maximo',
+            label: 'Esforço máximo',
             initialNumber: characterSheet.effortMaximum,
             allowNegative: false,
             onChanged: (int number) => controller.updateCharacter(
@@ -368,7 +368,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           _ManualSwitch(
-            title: 'Editar esforco maximo manualmente',
+            title: 'Editar esforço máximo manualmente',
             currentValue: characterSheet.useManualEffortMaximum,
             onChanged: (bool booleanValue) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -376,7 +376,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Esforco base',
+            label: 'Esforço base',
             initialNumber: characterSheet.baseEffort,
             onChanged: (int number) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -384,7 +384,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Esforco por presenca',
+            label: 'Esforço por presença',
             initialNumber: characterSheet.effortPerPresence,
             onChanged: (int number) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -392,7 +392,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Bonus manual de esforco',
+            label: 'Bônus manual de esforço',
             initialNumber: characterSheet.effortManualBonus,
             onChanged: (int number) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -427,7 +427,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             ),
           ),
           StandardNumberField(
-            label: 'Bonus manual de defesa',
+            label: 'Bônus manual de defesa',
             initialNumber: characterSheet.defenseManualBonus,
             onChanged: (int number) => controller.updateCharacter(
               (CharacterSheet currentSheet) =>
@@ -442,9 +442,9 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
   List<Widget> _skillFields(CharacterSheet characterSheet) {
     return <Widget>[
       SheetSectionCard(
-        title: 'Pericias',
+        title: 'Perícias',
         trailing: IconButton(
-          tooltip: 'Adicionar pericia',
+          tooltip: 'Adicionar perícia',
           onPressed: () => _updateSkills(<CharacterSkill>[
             ...characterSheet.skills,
             CharacterSkill.empty(),
@@ -493,7 +493,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
             .toList(),
       ),
       SheetSectionCard(
-        title: 'Itens e protecoes',
+        title: 'Itens e proteções',
         trailing: IconButton(
           tooltip: 'Adicionar item',
           onPressed: () => _updateItems(<CharacterItem>[
@@ -579,7 +579,7 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
   List<Widget> _noteFields(CharacterSheet characterSheet) {
     return <Widget>[
       SheetSectionCard(
-        title: 'Anotacoes e historico',
+        title: 'Anotações e histórico',
         trailing: PopupMenuButton<String>(
           tooltip: 'Adicionar nota',
           onSelected: (String category) => _updateNotes(<CharacterNote>[
@@ -589,11 +589,11 @@ class _CharacterFormPageState extends State<CharacterFormPage> {
           itemBuilder: (BuildContext context) => const <PopupMenuEntry<String>>[
             PopupMenuItem<String>(
               value: CharacterNoteCategory.general,
-              child: Text('Anotacao'),
+              child: Text('Anotação'),
             ),
             PopupMenuItem<String>(
               value: CharacterNoteCategory.history,
-              child: Text('Historico'),
+              child: Text('Histórico'),
             ),
             PopupMenuItem<String>(
               value: CharacterNoteCategory.ability,
@@ -821,7 +821,7 @@ class _SkillEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _EditorShell(
-      title: skill.name.isEmpty ? 'Pericia sem nome' : skill.name,
+      title: skill.name.isEmpty ? 'Perícia sem nome' : skill.name,
       onRemove: onRemove,
       children: <Widget>[
         StandardTextField(
@@ -836,7 +836,7 @@ class _SkillEditor extends StatelessWidget {
               onChanged(skill.copyWith(training: number)),
         ),
         StandardNumberField(
-          label: 'Bonus',
+          label: 'Bônus',
           initialNumber: skill.bonus,
           onChanged: (int number) => onChanged(skill.copyWith(bonus: number)),
         ),
@@ -874,7 +874,7 @@ class _WeaponEditor extends StatelessWidget {
           onChanged: (String text) => onChanged(weapon.copyWith(name: text)),
         ),
         StandardNumberField(
-          label: 'Bonus de ataque',
+          label: 'Bônus de ataque',
           initialNumber: weapon.attackBonus,
           onChanged: (int number) =>
               onChanged(weapon.copyWith(attackBonus: number)),
@@ -885,7 +885,7 @@ class _WeaponEditor extends StatelessWidget {
           onChanged: (String text) => onChanged(weapon.copyWith(damage: text)),
         ),
         StandardTextField(
-          label: 'Critico',
+          label: 'Crítico',
           initialText: weapon.critical,
           onChanged: (String text) =>
               onChanged(weapon.copyWith(critical: text)),
@@ -950,7 +950,7 @@ class _ItemEditor extends StatelessWidget {
               onChanged(characterItem.copyWith(weight: number)),
         ),
         StandardNumberField(
-          label: 'Bonus de defesa',
+          label: 'Bônus de defesa',
           initialNumber: characterItem.defenseBonus,
           onChanged: (int number) =>
               onChanged(characterItem.copyWith(defenseBonus: number)),
@@ -1000,7 +1000,7 @@ class _RitualEditor extends StatelessWidget {
           onChanged: (String text) => onChanged(ritual.copyWith(cost: text)),
         ),
         StandardTextField(
-          label: 'Descricao',
+          label: 'Descrição',
           initialText: ritual.description,
           maxLines: 4,
           onChanged: (String text) =>
@@ -1039,7 +1039,7 @@ class _PowerEditor extends StatelessWidget {
           onChanged: (String text) => onChanged(power.copyWith(category: text)),
         ),
         StandardTextField(
-          label: 'Descricao',
+          label: 'Descrição',
           initialText: power.description,
           maxLines: 4,
           onChanged: (String text) =>
@@ -1068,7 +1068,7 @@ class _NoteEditor extends StatelessWidget {
       onRemove: onRemove,
       children: <Widget>[
         StandardTextField(
-          label: 'Titulo',
+          label: 'Título',
           initialText: note.title,
           onChanged: (String text) => onChanged(note.copyWith(title: text)),
         ),
@@ -1078,7 +1078,7 @@ class _NoteEditor extends StatelessWidget {
           onChanged: (String text) => onChanged(note.copyWith(category: text)),
         ),
         StandardTextField(
-          label: 'Conteudo',
+          label: 'Conteúdo',
           initialText: note.content,
           maxLines: 5,
           onChanged: (String text) => onChanged(note.copyWith(content: text)),

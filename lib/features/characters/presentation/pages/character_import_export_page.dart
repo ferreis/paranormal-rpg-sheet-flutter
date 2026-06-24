@@ -60,7 +60,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
         characterId,
       );
     } catch (exception) {
-      message = 'Nao foi possivel exportar a ficha.';
+      message = 'Não foi possível exportar a ficha.';
     } finally {
       if (mounted) {
         setState(() {
@@ -74,7 +74,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
     final int? characterId = widget.characterId;
 
     if (characterId == null) {
-      throw StateError('Ficha nao informada.');
+      throw StateError('Ficha não informada.');
     }
 
     final CharacterSheet? characterSheet = await widget.repository.getCharacter(
@@ -82,7 +82,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
     );
 
     if (characterSheet == null) {
-      throw StateError('Ficha nao encontrada.');
+      throw StateError('Ficha não encontrada.');
     }
 
     return characterSheet;
@@ -161,7 +161,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
       }
 
       setState(() {
-        message = 'Nao foi possivel importar o arquivo.';
+        message = 'Não foi possível importar o arquivo.';
       });
     } finally {
       if (mounted) {
@@ -197,7 +197,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
 
       setState(() {
         message =
-            'Nao foi possivel importar do C.R.I.S. Verifique se o link e publico.';
+            'Não foi possível importar do C.R.I.S. Verifique se o link é público.';
       });
     } finally {
       if (mounted) {
@@ -232,7 +232,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
         await widget.fileExportService.shareFile(
           file: pdfFile,
           subject: 'Ficha ${characterSheet.characterName}',
-          text: 'Ficha editavel em PDF.',
+          text: 'Ficha editável em PDF.',
         );
       } else {
         await widget.fileExportService.openFile(pdfFile);
@@ -245,7 +245,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
       setState(() {
         message = shareAfterCreate
             ? 'PDF pronto para compartilhar.'
-            : 'PDF editavel gerado.';
+            : 'PDF editável gerado.';
       });
     } catch (exception) {
       if (!mounted) {
@@ -253,7 +253,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
       }
 
       setState(() {
-        message = 'Nao foi possivel gerar o PDF.';
+        message = 'Não foi possível gerar o PDF.';
       });
     } finally {
       if (mounted) {
@@ -300,7 +300,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
       }
 
       setState(() {
-        message = 'Nao foi possivel compartilhar a ficha.';
+        message = 'Não foi possível compartilhar a ficha.';
       });
     } finally {
       if (mounted) {
@@ -357,7 +357,7 @@ class _CharacterImportExportPageState extends State<CharacterImportExportPage> {
               FilledButton.icon(
                 onPressed: isLoading ? null : _openEditablePdf,
                 icon: const Icon(Icons.picture_as_pdf_outlined),
-                label: const Text('Gerar PDF editavel'),
+                label: const Text('Gerar PDF editável'),
               ),
               const SizedBox(height: 8),
               OutlinedButton.icon(

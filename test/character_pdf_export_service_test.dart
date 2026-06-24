@@ -8,10 +8,10 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('gera PDF editavel preenchendo campos principais', () async {
+  test('gera PDF editável preenchendo campos principais', () async {
     final CharacterSheet characterSheet = CharacterSheet.empty().copyWith(
       characterName: 'Arthur Cervero',
-      playerName: 'Joao',
+      playerName: 'João',
       attributes: const CharacterAttributes(
         strength: 2,
         agility: 3,
@@ -31,7 +31,7 @@ void main() {
     try {
       expect(pdfDocument.form.fields.count, greaterThan(0));
       expect(_textFieldValue(pdfDocument, 'untitled1'), 'Arthur Cervero');
-      expect(_textFieldValue(pdfDocument, 'untitled2'), 'Joao');
+      expect(_textFieldValue(pdfDocument, 'untitled2'), 'João');
       expect(_textFieldValue(pdfDocument, 'untitled12'), '2');
       expect(_textFieldValue(pdfDocument, 'untitled13'), '3');
       expect(_textFieldValue(pdfDocument, 'untitled14'), '4');
@@ -42,7 +42,7 @@ void main() {
     }
   });
 
-  test('gera paginas extras para anotacoes fora dos campos editaveis', () async {
+  test('gera páginas extras para anotações fora dos campos editáveis', () async {
     final CharacterSheet characterSheet = CharacterSheet.empty().copyWith(
       characterName: 'Livia Torres',
       notes: const <CharacterNote>[
@@ -92,7 +92,7 @@ void main() {
     }
   });
 
-  test('preenche inventario usando os campos corretos do template', () async {
+  test('preenche inventário usando os campos corretos do template', () async {
     final CharacterSheet characterSheet = CharacterSheet.empty().copyWith(
       items: const <CharacterItem>[
         CharacterItem(
@@ -156,7 +156,7 @@ String _textFieldValue(PdfDocument pdfDocument, String fieldName) {
     }
   }
 
-  throw StateError('Campo $fieldName nao encontrado no PDF.');
+  throw StateError('Campo $fieldName não encontrado no PDF.');
 }
 
 bool _hasTextField(PdfDocument pdfDocument, String fieldName) {

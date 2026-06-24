@@ -21,7 +21,7 @@ class CharacterFileExportService {
     );
     final Directory exportDirectory = await _exportDirectory();
     final String fileName =
-        '${_safeFileName(characterSheet.characterName)}-ficha-editavel.pdf';
+        '${_safeFileName(characterSheet.characterName)}-ficha-editável.pdf';
     final File pdfFile = File(path.join(exportDirectory.path, fileName));
 
     return pdfFile.writeAsBytes(pdfBytes, flush: true);

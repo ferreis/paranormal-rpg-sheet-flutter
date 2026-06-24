@@ -8,7 +8,7 @@ App Flutter offline para criar, calcular e consultar fichas de RPG de Ordem Para
 - Dart 3.12.x
 - Android
 - SQLite local com `sqflite`
-- Importacao online opcional via link publico do C.R.I.S.
+- Importação online opcional via link público do C.R.I.S.
 
 ## Rodar localmente
 
@@ -17,7 +17,7 @@ flutter pub get
 flutter run
 ```
 
-Para usar a importacao por link do C.R.I.S., informe a chave em tempo de build:
+Para usar a importação por link do C.R.I.S., informe a chave em tempo de build:
 
 ```bash
 flutter run --dart-define=CRIS_FIREBASE_API_KEY=sua_chave
@@ -32,8 +32,8 @@ flutter test
 ## Escopo inicial
 
 - Fichas salvas offline.
-- Calculo automatico de atributos, pericias, defesa, vida, sanidade e PE.
-- Inventario.
+- Cálculo automático de atributos, perícias, defesa, vida, sanidade e PE.
+- Inventário.
 - Suporte inicial focado em Android.
 
 ## Estrutura criada
@@ -41,10 +41,10 @@ flutter test
 - `lib/core/database/app_database.dart`: abertura do SQLite e schema.
 - `lib/features/characters/data/models/character_sheet.dart`: modelos da ficha.
 - `lib/features/characters/data/repositories/character_repository.dart`: acesso ao banco.
-- `lib/features/characters/domain/services/character_calculation_service.dart`: calculos automaticos.
-- `lib/features/characters/presentation/controllers/character_editor_controller.dart`: estado da edicao e auto-save.
-- `lib/features/characters/data/services/cris_character_import_service.dart`: importacao de ficha publica do C.R.I.S.
-- `lib/features/characters/presentation/pages/`: telas de lista, detalhe, formulario, edicao, JSON e importacao C.R.I.S.
+- `lib/features/characters/domain/services/character_calculation_service.dart`: cálculos automáticos.
+- `lib/features/characters/presentation/controllers/character_editor_controller.dart`: estado da edição e auto-save.
+- `lib/features/characters/data/services/cris_character_import_service.dart`: importação de ficha pública do C.R.I.S.
+- `lib/features/characters/presentation/pages/`: telas de lista, detalhe, formulário, edição, JSON e importação C.R.I.S.
 - `lib/features/characters/presentation/widgets/`: campos, cards, seletor de atributo e status de salvamento.
 
 ## Banco SQLite
@@ -62,19 +62,19 @@ Tabelas:
 
 Regras:
 
-- Cada ficha usa `id` unico.
+- Cada ficha usa `id` único.
 - Registros filhos usam `character_id`.
-- Exclusao da ficha remove os dados dependentes com `ON DELETE CASCADE`.
+- Exclusão da ficha remove os dados dependentes com `ON DELETE CASCADE`.
 - `created_at` e `updated_at` ficam em `characters`.
-- Telas nao acessam SQLite diretamente.
+- Telas não acessam SQLite diretamente.
 
 ## Telas
 
-- `CharacterListPage`: lista fichas, busca por nome, cria, duplica, exclui e abre importacoes.
-- `CharacterFormPage`: formulario editavel com abas.
-- `CharacterDetailPage`: resumo da ficha e acoes principais.
-- `CharacterEditPage`: entrada dedicada para edicao.
-- `CharacterImportExportPage`: importacao/exportacao por JSON e importacao por link C.R.I.S.
+- `CharacterListPage`: lista fichas, busca por nome, cria, duplica, exclui e abre importações.
+- `CharacterFormPage`: formulário editável com abas.
+- `CharacterDetailPage`: resumo da ficha e ações principais.
+- `CharacterEditPage`: entrada dedicada para edição.
+- `CharacterImportExportPage`: importação/exportação por JSON e importação por link C.R.I.S.
 
 ## Funcionalidades implementadas
 
@@ -87,33 +87,33 @@ Regras:
 - Auto-save com indicador de status.
 - Exportar ficha em JSON.
 - Importar ficha por JSON.
-- Importar ficha publica do C.R.I.S. por link.
-- Adicionar pericia, arma, item, ritual, poder, habilidade, anotacao e historico.
+- Importar ficha pública do C.R.I.S. por link.
+- Adicionar perícia, arma, item, ritual, poder, habilidade, anotação e histórico.
 - Organizar a ficha por abas.
 
-Observacao:
+Observação:
 
-- A importacao C.R.I.S. busca dados publicos da ficha e salva no SQLite local.
-- Descricoes longas de regras, itens, poderes e rituais nao sao importadas automaticamente.
+- A importação C.R.I.S. busca dados públicos da ficha e salva no SQLite local.
+- Descrições longas de regras, itens, poderes e rituais não são importadas automaticamente.
 
-## Calculos automaticos
+## Cálculos automáticos
 
-- Vida maxima = vida base + vigor * vida por vigor + bonus manual.
-- Sanidade maxima = sanidade base + presenca * sanidade por presenca + bonus manual.
-- Esforco maximo = esforco base + presenca * esforco por presenca + bonus manual.
-- Defesa = defesa base + agilidade + bonus de protecoes + bonus manual.
-- Valores maximos podem ser editados manualmente por override.
-- Vida, sanidade e esforco atuais sao limitados entre zero e o maximo.
+- Vida máxima = vida base + vigor * vida por vigor + bônus manual.
+- Sanidade máxima = sanidade base + presença * sanidade por presença + bônus manual.
+- Esforço máximo = esforço base + presença * esforço por presença + bônus manual.
+- Defesa = defesa base + agilidade + bônus de proteções + bônus manual.
+- Valores máximos podem ser editados manualmente por override.
+- Vida, sanidade e esforço atuais são limitados entre zero e o máximo.
 
-## Validacoes feitas
+## Validações feitas
 
 - `flutter analyze`
 - `flutter test`
-  - calculos automaticos;
-  - repository com SQLite em arquivo temporario;
-  - conversao de ficha C.R.I.S. para o modelo local;
+  - cálculos automáticos;
+  - repository com SQLite em arquivo temporário;
+  - conversão de ficha C.R.I.S. para o modelo local;
   - salvar, reabrir, listar, duplicar, exportar, importar e excluir ficha;
-  - exclusao em cascata dos dados dependentes.
+  - exclusão em cascata dos dados dependentes.
 - `flutter build apk --debug`
 
 Build gerado em:
@@ -122,8 +122,8 @@ Build gerado em:
 build/app/outputs/flutter-apk/app-debug.apk
 ```
 
-## Pendencias futuras
+## Pendências futuras
 
 - Melhorar fluxo visual de copiar/compartilhar JSON.
 - Adicionar filtros por classe, trilha ou patente.
-- Criar backup/restauracao de multiplas fichas em lote.
+- Criar backup/restauração de múltiplas fichas em lote.

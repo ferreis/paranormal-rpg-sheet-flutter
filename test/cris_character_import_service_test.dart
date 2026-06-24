@@ -57,11 +57,11 @@ void main() {
     expect(characterSheet.attributes.intellect, 3);
     expect(characterSheet.skills.single.name, 'Diplomacia');
     expect(characterSheet.skills.single.training, 5);
-    expect(characterSheet.weapons.single.name, 'Bastao');
+    expect(characterSheet.weapons.single.name, 'Bastão');
     expect(characterSheet.items.single.name, 'Lanterna');
     expect(characterSheet.powers.single.description, isEmpty);
-    expect(characterSheet.notes.first.title, 'Historico');
-    expect(characterSheet.notes.last.title, 'Importacao C.R.I.S.');
+    expect(characterSheet.notes.first.title, 'Histórico');
+    expect(characterSheet.notes.last.title, 'Importação C.R.I.S.');
   });
 }
 
@@ -101,7 +101,7 @@ Map<String, Object?> _firestoreDocument() {
       ]),
       'attacks': _array(<Object?>[
         _map(<String, Object?>{
-          'name': _string('Bastao'),
+          'name': _string('Bastão'),
           'attackBonus': _integer(0),
           'damage': _string('1d6'),
           'criticalRange': _integer(20),
@@ -123,11 +123,11 @@ Map<String, Object?> _firestoreDocument() {
       'powers': _array(<Object?>[
         _map(<String, Object?>{
           'name': _string('Empenho'),
-          'description': _string('Descricao oficial longa ignorada.'),
+          'description': _string('Descrição oficial longa ignorada.'),
         }),
       ]),
       'description': _map(<String, Object?>{
-        'history': _string('Historia criada pelo usuario.'),
+        'history': _string('História criada pelo usuário.'),
         'anotation': _string('Notas livres.'),
       }),
     },

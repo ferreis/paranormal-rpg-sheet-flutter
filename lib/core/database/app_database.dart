@@ -204,7 +204,7 @@ class AppDatabase {
       CREATE TABLE character_notes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         character_id INTEGER NOT NULL,
-        category TEXT NOT NULL DEFAULT 'Anotacoes',
+        category TEXT NOT NULL DEFAULT 'Anotações',
         title TEXT NOT NULL DEFAULT '',
         content TEXT NOT NULL DEFAULT '',
         FOREIGN KEY (character_id)

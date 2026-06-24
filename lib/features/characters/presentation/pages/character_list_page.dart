@@ -60,7 +60,7 @@ class _CharacterListPageState extends State<CharacterListPage> {
       }
 
       setState(() {
-        errorMessage = 'Nao foi possivel carregar as fichas.';
+        errorMessage = 'Não foi possível carregar as fichas.';
       });
     } finally {
       if (mounted) {

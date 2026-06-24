@@ -565,15 +565,15 @@ class CharacterSkill {
       'Atualidades',
       'Crime',
       'Diplomacia',
-      'Enganacao',
+      'Enganação',
       'Fortitude',
       'Iniciativa',
-      'Intimidacao',
-      'Investigacao',
+      'Intimidação',
+      'Investigação',
       'Luta',
       'Medicina',
       'Ocultismo',
-      'Percepcao',
+      'Percepção',
       'Pontaria',
       'Reflexos',
       'Tecnologia',
@@ -795,7 +795,9 @@ class CharacterItem {
   final int defenseBonus;
   final String notes;
 
-  bool get isProtection => category.toLowerCase().contains('protec');
+  bool get isProtection {
+    return category.toLowerCase().replaceAll('\u00e7', 'c').contains('protec');
+  }
 
   Map<String, Object?> toDatabaseMap(int ownerCharacterId) {
     return <String, Object?>{
@@ -1079,8 +1081,8 @@ class CharacterNote {
 class CharacterNoteCategory {
   const CharacterNoteCategory._();
 
-  static const String general = 'Anotacoes';
-  static const String history = 'Historico';
+  static const String general = 'Anotações';
+  static const String history = 'Histórico';
   static const String ability = 'Habilidade';
 }
 

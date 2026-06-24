@@ -3,7 +3,7 @@ import 'package:ordem_fichas/features/characters/data/models/character_sheet.dar
 import 'package:ordem_fichas/features/characters/domain/services/character_calculation_service.dart';
 
 void main() {
-  test('atualiza vida, sanidade, esforco e defesa automaticamente', () {
+  test('atualiza vida, sanidade, esforço e defesa automaticamente', () {
     final CharacterCalculationService calculationService =
         CharacterCalculationService();
 
@@ -25,7 +25,7 @@ void main() {
       baseDefense: 10,
       defenseManualBonus: 2,
       items: <CharacterItem>[
-        CharacterItem.empty(category: 'Protecao').copyWith(defenseBonus: 4),
+        CharacterItem.empty(category: 'Proteção').copyWith(defenseBonus: 4),
       ],
     );
 

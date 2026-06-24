@@ -44,7 +44,7 @@ class CharacterEditorController extends ChangeNotifier {
             : _calculationService.applyAutomaticValues(loadedCharacter);
       }
     } catch (exception) {
-      errorMessage = 'Nao foi possivel carregar a ficha.';
+      errorMessage = 'Não foi possível carregar a ficha.';
     } finally {
       isLoading = false;
       notifyListeners();

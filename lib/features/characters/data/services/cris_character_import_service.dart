@@ -32,7 +32,7 @@ class CrisCharacterImportService {
     final http.Response response = await httpClient.get(firestoreUri);
 
     if (response.statusCode != 200) {
-      throw StateError('Ficha C.R.I.S. nao encontrada ou privada.');
+      throw StateError('Ficha C.R.I.S. não encontrada ou privada.');
     }
 
     final Object? decodedBody = jsonDecode(response.body);
@@ -148,7 +148,7 @@ class CrisCharacterImportService {
       final String attribute = _text(skill['attribute']);
 
       return CharacterSkill(
-        name: _text(skill['name'], fallback: 'Pericia'),
+        name: _text(skill['name'], fallback: 'Perícia'),
         training: _integer(skill['trainingDegree']),
         bonus: _integer(skill['otherBonus']),
         notes: attribute.isEmpty ? '' : 'Atributo no C.R.I.S.: $attribute',
@@ -176,7 +176,7 @@ class CrisCharacterImportService {
         ].join(' / '),
         range: _text(attack['range']),
         notes: [
-          if (skillUsed.isNotEmpty) 'Pericia: $skillUsed',
+          if (skillUsed.isNotEmpty) 'Perícia: $skillUsed',
           if (damageType.isNotEmpty) 'Tipo: $damageType',
         ].join('\n'),
       );
@@ -194,7 +194,7 @@ class CrisCharacterImportService {
       final String itemCategory = tag.isNotEmpty
           ? tag
           : itemType == 'protection'
-          ? 'Protecao'
+          ? 'Proteção'
           : category.isNotEmpty
           ? category
           : 'Item';
@@ -262,18 +262,18 @@ class CrisCharacterImportService {
       );
     }
 
-    addDescriptionNote('history', 'Historico');
-    addDescriptionNote('physical', 'Descricao fisica');
+    addDescriptionNote('history', 'Histórico');
+    addDescriptionNote('physical', 'Descrição física');
     addDescriptionNote('goal', 'Objetivo');
     addDescriptionNote('personal', 'Personalidade');
-    addDescriptionNote('anotation', 'Anotacoes');
+    addDescriptionNote('anotation', 'Anotações');
 
     notes.add(
       CharacterNote(
         category: CharacterNoteCategory.general,
-        title: 'Importacao C.R.I.S.',
+        title: 'Importação C.R.I.S.',
         content:
-            'Fonte: $sourceUrl\nDescricoes longas de regras, itens, poderes e rituais nao foram importadas automaticamente.',
+            'Fonte: $sourceUrl\nDescrições longas de regras, itens, poderes e rituais não foram importadas automaticamente.',
       ),
     );
 
