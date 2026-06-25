@@ -2,18 +2,17 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:open_filex/open_filex.dart';
+import 'package:ordem_fichas/features/characters/data/services/sheet_pdf_service.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../models/character_sheet.dart';
-import 'character_pdf_export_service.dart';
+class SheetFileService {
+  SheetFileService({SheetPdfService? pdfExportService})
+    : _pdfExportService = pdfExportService ?? SheetPdfService();
 
-class CharacterFileExportService {
-  CharacterFileExportService({CharacterPdfExportService? pdfExportService})
-    : _pdfExportService = pdfExportService ?? CharacterPdfExportService();
-
-  final CharacterPdfExportService _pdfExportService;
+  final SheetPdfService _pdfExportService;
 
   Future<File> createEditablePdfFile(CharacterSheet characterSheet) async {
     final Uint8List pdfBytes = await _pdfExportService.buildEditablePdf(

@@ -1,4 +1,4 @@
-import '../../data/models/character_sheet.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
 
 class CharacterCalculationService {
   CharacterSheet applyAutomaticValues(CharacterSheet characterSheet) {

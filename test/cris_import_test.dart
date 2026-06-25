@@ -3,12 +3,11 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:ordem_fichas/features/characters/data/services/cris_character_import_service.dart';
+import 'package:ordem_fichas/features/characters/data/services/cris_import_service.dart';
 
 void main() {
   test('extrai id da URL do C.R.I.S.', () {
-    final CrisCharacterImportService importService =
-        CrisCharacterImportService();
+    final CrisImportService importService = CrisImportService();
 
     expect(
       importService.extractCharacterId(
@@ -24,7 +23,7 @@ void main() {
 
   test('importa ficha do C.R.I.S. sem exigir API key configurada', () async {
     Uri? requestedUri;
-    final CrisCharacterImportService importService = CrisCharacterImportService(
+    final CrisImportService importService = CrisImportService(
       apiKey: '',
       httpClient: MockClient((http.Request request) async {
         requestedUri = request.url;
@@ -47,8 +46,7 @@ void main() {
   });
 
   test('converte documento Firestore do C.R.I.S. em ficha local', () {
-    final CrisCharacterImportService importService =
-        CrisCharacterImportService();
+    final CrisImportService importService = CrisImportService();
 
     final characterSheet = importService.characterSheetFromFirestoreDocument(
       _firestoreDocument(),

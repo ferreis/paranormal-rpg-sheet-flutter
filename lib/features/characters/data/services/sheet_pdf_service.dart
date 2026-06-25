@@ -1,9 +1,8 @@
 import 'package:flutter/services.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
-import '../models/character_sheet.dart';
-
-class CharacterPdfExportService {
+class SheetPdfService {
   static const String templateAssetPath =
       'assets/forms/FichaDosAgentesEditavel.pdf';
 

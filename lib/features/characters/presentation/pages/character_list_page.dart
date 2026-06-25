@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../data/models/character_sheet.dart';
-import '../../data/repositories/character_repository.dart';
-import 'character_detail_page.dart';
-import 'character_form_page.dart';
-import 'character_import_export_page.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
+import 'package:ordem_fichas/features/characters/domain/repositories/character_repository.dart';
+import 'package:ordem_fichas/features/characters/presentation/pages/character_detail_page.dart';
+import 'package:ordem_fichas/features/characters/presentation/pages/character_form_page.dart';
+import 'package:ordem_fichas/features/characters/presentation/pages/sheet_transfer_page.dart';
 
 class CharacterListPage extends StatefulWidget {
   const CharacterListPage({required this.repository, super.key});
@@ -108,7 +108,7 @@ class _CharacterListPageState extends State<CharacterListPage> {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) =>
-            CharacterImportExportPage(repository: widget.repository),
+            SheetTransferPage(repository: widget.repository),
       ),
     );
     _loadCharacters();

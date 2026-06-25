@@ -1,11 +1,10 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
 
-import '../models/character_sheet.dart';
-
-class CrisCharacterImportService {
-  CrisCharacterImportService({
+class CrisImportService {
+  CrisImportService({
     http.Client? httpClient,
     this.apiKey = const String.fromEnvironment('CRIS_FIREBASE_API_KEY'),
   }) : httpClient = httpClient ?? http.Client();

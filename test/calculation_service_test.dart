@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ordem_fichas/features/characters/data/models/character_sheet.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
 import 'package:ordem_fichas/features/characters/domain/services/character_calculation_service.dart';
 
 void main() {

@@ -38,12 +38,20 @@ flutter test
 
 ## Estrutura criada
 
+- `lib/app/app.dart`: configuração principal do app.
+- `lib/app/router/app_routes.dart`: constantes de rotas.
+- `lib/app/theme/app_theme.dart`: tema principal.
+- `lib/app/dependency_injection/injection.dart`: montagem das dependências globais.
 - `lib/core/database/app_database.dart`: abertura do SQLite e schema.
-- `lib/features/characters/data/models/character_sheet.dart`: modelos da ficha.
-- `lib/features/characters/data/repositories/character_repository.dart`: acesso ao banco.
+- `lib/features/characters/domain/entities/character_sheet.dart`: entidade da ficha.
+- `lib/features/characters/domain/repositories/character_repository.dart`: contrato do repository.
+- `lib/features/characters/data/repositories/character_repository_impl.dart`: implementação do repository.
+- `lib/features/characters/data/datasources/character_local_datasource.dart`: acesso ao banco local.
 - `lib/features/characters/domain/services/character_calculation_service.dart`: cálculos automáticos.
 - `lib/features/characters/presentation/controllers/character_editor_controller.dart`: estado da edição e auto-save.
-- `lib/features/characters/data/services/cris_character_import_service.dart`: importação de ficha pública do C.R.I.S.
+- `lib/features/characters/data/services/cris_import_service.dart`: importação de ficha pública do C.R.I.S.
+- `lib/features/characters/data/services/sheet_pdf_service.dart`: geração de PDF editável.
+- `lib/features/characters/data/services/sheet_file_service.dart`: criação, abertura e compartilhamento de arquivos.
 - `lib/features/characters/presentation/pages/`: telas de lista, detalhe, formulário, edição, JSON e importação C.R.I.S.
 - `lib/features/characters/presentation/widgets/`: campos, cards, seletor de atributo e status de salvamento.
 
@@ -74,7 +82,7 @@ Regras:
 - `CharacterFormPage`: formulário editável com abas.
 - `CharacterDetailPage`: resumo da ficha e ações principais.
 - `CharacterEditPage`: entrada dedicada para edição.
-- `CharacterImportExportPage`: importação/exportação por JSON e importação por link C.R.I.S.
+- `SheetTransferPage`: importação/exportação por JSON, QR Code, arquivo, PDF e link C.R.I.S.
 
 ## Funcionalidades implementadas
 

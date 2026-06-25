@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'app/ordem_fichas_app.dart';
+import 'package:ordem_fichas/app/app.dart';
 
 void main() {
-  runApp(OrdemFichasApp());
+  runApp(const App());
 }

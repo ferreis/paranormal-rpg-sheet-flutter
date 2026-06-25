@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-
-import '../../data/models/character_sheet.dart';
-import '../../data/repositories/character_repository.dart';
-import '../../domain/services/character_calculation_service.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
+import 'package:ordem_fichas/features/characters/domain/repositories/character_repository.dart';
+import 'package:ordem_fichas/features/characters/domain/services/character_calculation_service.dart';
 
 enum CharacterSaveStatus { idle, saving, saved, error }
 

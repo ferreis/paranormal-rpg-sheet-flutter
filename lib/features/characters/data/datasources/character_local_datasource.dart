@@ -1,25 +1,12 @@
-import 'dart:convert';
-
+import 'package:ordem_fichas/core/database/app_database.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../../../core/database/app_database.dart';
-import '../../domain/services/character_calculation_service.dart';
-import '../models/character_sheet.dart';
-import '../services/cris_character_import_service.dart';
-
-class CharacterRepository {
-  CharacterRepository({
-    AppDatabase? appDatabase,
-    CharacterCalculationService? calculationService,
-    CrisCharacterImportService? crisImportService,
-  }) : _appDatabase = appDatabase ?? AppDatabase.instance,
-       _calculationService =
-           calculationService ?? CharacterCalculationService(),
-       _crisImportService = crisImportService ?? CrisCharacterImportService();
+class CharacterLocalDatasource {
+  CharacterLocalDatasource({AppDatabase? appDatabase})
+    : _appDatabase = appDatabase ?? AppDatabase.instance;
 
   final AppDatabase _appDatabase;
-  final CharacterCalculationService _calculationService;
-  final CrisCharacterImportService _crisImportService;
 
   Future<List<CharacterSheet>> listCharacters({String searchTerm = ''}) async {
     final Database database = await _appDatabase.database;
@@ -107,32 +94,22 @@ class CharacterRepository {
     );
   }
 
-  Future<CharacterSheet> createCharacter(CharacterSheet characterSheet) async {
-    return saveCharacter(characterSheet.copyWith(clearId: true));
-  }
-
   Future<CharacterSheet> saveCharacter(CharacterSheet characterSheet) async {
     final Database database = await _appDatabase.database;
-    final DateTime currentDate = DateTime.now();
-    final CharacterSheet calculatedSheet = _calculationService
-        .applyAutomaticValues(characterSheet.copyWith(updatedAt: currentDate));
 
     return database.transaction((Transaction transaction) async {
       final int characterId;
       final CharacterSheet sheetForPersistence;
 
-      if (calculatedSheet.id == null) {
-        sheetForPersistence = calculatedSheet.copyWith(
-          createdAt: currentDate,
-          updatedAt: currentDate,
-        );
+      if (characterSheet.id == null) {
+        sheetForPersistence = characterSheet;
         characterId = await transaction.insert(
           'characters',
           sheetForPersistence.toDatabaseMap()..remove('id'),
         );
       } else {
-        sheetForPersistence = calculatedSheet;
-        characterId = calculatedSheet.id!;
+        sheetForPersistence = characterSheet;
+        characterId = characterSheet.id!;
         await transaction.update(
           'characters',
           sheetForPersistence.toDatabaseMap()..remove('id'),
@@ -219,55 +196,6 @@ class CharacterRepository {
       where: 'id = ?',
       whereArgs: <Object?>[characterId],
     );
-  }
-
-  Future<CharacterSheet> duplicateCharacter(int characterId) async {
-    final CharacterSheet? existingCharacter = await getCharacter(characterId);
-
-    if (existingCharacter == null) {
-      throw StateError('Ficha não encontrada para duplicar.');
-    }
-
-    return createCharacter(
-      existingCharacter.copyWith(
-        clearId: true,
-        characterName: '${existingCharacter.characterName} - cópia',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      ),
-    );
-  }
-
-  Future<String> exportCharacterAsJson(int characterId) async {
-    final CharacterSheet? characterSheet = await getCharacter(characterId);
-
-    if (characterSheet == null) {
-      throw StateError('Ficha não encontrada para exportar.');
-    }
-
-    return const JsonEncoder.withIndent('  ').convert(characterSheet.toJson());
-  }
-
-  Future<CharacterSheet> importCharacterFromJson(String jsonContent) async {
-    final Object? decodedJson = jsonDecode(jsonContent);
-
-    if (decodedJson is! Map) {
-      throw const FormatException('JSON invalido para ficha.');
-    }
-
-    final Map<String, Object?> jsonMap = decodedJson.map(
-      (Object? rawKey, Object? rawJsonValue) =>
-          MapEntry(rawKey.toString(), rawJsonValue),
-    );
-
-    return createCharacter(CharacterSheet.fromJson(jsonMap));
-  }
-
-  Future<CharacterSheet> importCharacterFromCrisUrl(String crisUrl) async {
-    final CharacterSheet importedCharacter = await _crisImportService
-        .importFromUrl(crisUrl);
-
-    return createCharacter(importedCharacter);
   }
 
   Future<List<ChildModel>> _loadChildren<ChildModel>({

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ordem_fichas/features/characters/data/models/character_sheet.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
 import 'package:ordem_fichas/features/characters/presentation/pages/character_detail_page.dart';
 
 void main() {

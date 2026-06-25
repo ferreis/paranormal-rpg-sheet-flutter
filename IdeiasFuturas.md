@@ -7,15 +7,15 @@
 
 ## Compartilhamento de ficha
 
-* [ ] Compartilhar ficha por QR Code.
-* [ ] Alterar o nome **Compartilhar Ficha do App** para apenas **Compartilhar**.
-* [ ] Trocar o ícone atual de Bluetooth por um ícone mais genérico de compartilhamento.
-* [ ] Adicionar opções de compartilhamento:
+* [x] Compartilhar ficha por QR Code.
+* [x] Alterar o nome **Compartilhar Ficha do App** para apenas **Compartilhar**.
+* [x] Trocar o ícone atual de Bluetooth por um ícone mais genérico de compartilhamento.
+* [x] Adicionar opções de compartilhamento:
 
-  * [ ] Bluetooth
-  * [ ] QR Code
-  * [ ] WhatsApp
-  * [ ] E-mail
+  * [x] Bluetooth
+  * [x] QR Code
+  * [x] WhatsApp
+  * [x] E-mail
 
 ## Sincronização sem servidor
 

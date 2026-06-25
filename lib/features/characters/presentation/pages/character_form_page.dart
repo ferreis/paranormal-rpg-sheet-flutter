@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../data/models/character_sheet.dart';
-import '../../data/repositories/character_repository.dart';
-import '../controllers/character_editor_controller.dart';
-import '../widgets/attribute_selector.dart';
-import '../widgets/save_status_indicator.dart';
-import '../widgets/sheet_section_card.dart';
-import '../widgets/standard_number_field.dart';
-import '../widgets/standard_text_field.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
+import 'package:ordem_fichas/features/characters/domain/repositories/character_repository.dart';
+import 'package:ordem_fichas/features/characters/presentation/controllers/character_editor_controller.dart';
+import 'package:ordem_fichas/features/characters/presentation/widgets/attribute_selector.dart';
+import 'package:ordem_fichas/features/characters/presentation/widgets/save_status_indicator.dart';
+import 'package:ordem_fichas/features/characters/presentation/widgets/sheet_section_card.dart';
+import 'package:ordem_fichas/features/characters/presentation/widgets/standard_number_field.dart';
+import 'package:ordem_fichas/features/characters/presentation/widgets/standard_text_field.dart';
 
 class CharacterFormPage extends StatefulWidget {
   const CharacterFormPage({

@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ordem_fichas/core/database/app_database.dart';
-import 'package:ordem_fichas/features/characters/data/models/character_sheet.dart';
-import 'package:ordem_fichas/features/characters/data/repositories/character_repository.dart';
+import 'package:ordem_fichas/features/characters/data/repositories/character_repository_impl.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
+import 'package:ordem_fichas/features/characters/domain/repositories/character_repository.dart';
 import 'package:path/path.dart' as path_package;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -26,7 +27,7 @@ void main() {
         databasePath: databasePath,
         databaseFactory: databaseFactoryFfi,
       );
-      final CharacterRepository firstRepository = CharacterRepository(
+      final CharacterRepository firstRepository = CharacterRepositoryImpl(
         appDatabase: firstDatabase,
       );
       final CharacterSheet savedCharacter = await firstRepository.saveCharacter(
@@ -48,7 +49,7 @@ void main() {
         databasePath: databasePath,
         databaseFactory: databaseFactoryFfi,
       );
-      final CharacterRepository reopenedRepository = CharacterRepository(
+      final CharacterRepository reopenedRepository = CharacterRepositoryImpl(
         appDatabase: reopenedDatabase,
       );
       final CharacterSheet? loadedCharacter = await reopenedRepository

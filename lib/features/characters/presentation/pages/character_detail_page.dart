@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../data/models/character_sheet.dart';
-import '../../data/repositories/character_repository.dart';
-import 'character_edit_page.dart';
-import 'character_import_export_page.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
+import 'package:ordem_fichas/features/characters/domain/repositories/character_repository.dart';
+import 'package:ordem_fichas/features/characters/presentation/pages/character_edit_page.dart';
+import 'package:ordem_fichas/features/characters/presentation/pages/sheet_transfer_page.dart';
 
 class CharacterDetailPage extends StatefulWidget {
   const CharacterDetailPage({
@@ -81,7 +81,7 @@ class _CharacterDetailPageState extends State<CharacterDetailPage> {
   void _openExport() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => CharacterImportExportPage(
+        builder: (BuildContext context) => SheetTransferPage(
           repository: widget.repository,
           characterId: widget.characterId,
         ),

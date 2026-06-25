@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ordem_fichas/features/characters/data/models/character_sheet.dart';
-import 'package:ordem_fichas/features/characters/data/services/character_pdf_export_service.dart';
+import 'package:ordem_fichas/features/characters/domain/entities/character_sheet.dart';
+import 'package:ordem_fichas/features/characters/data/services/sheet_pdf_service.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 void main() {
@@ -20,8 +20,7 @@ void main() {
         vigor: 5,
       ),
     );
-    final CharacterPdfExportService pdfExportService =
-        CharacterPdfExportService();
+    final SheetPdfService pdfExportService = SheetPdfService();
 
     final Uint8List pdfBytes = await pdfExportService.buildEditablePdf(
       characterSheet,
@@ -60,8 +59,7 @@ void main() {
         ),
       ],
     );
-    final CharacterPdfExportService pdfExportService =
-        CharacterPdfExportService();
+    final SheetPdfService pdfExportService = SheetPdfService();
 
     final Uint8List emptyPdfBytes = await pdfExportService.buildEditablePdf(
       CharacterSheet.empty(),
@@ -121,8 +119,7 @@ void main() {
         ),
       ],
     );
-    final CharacterPdfExportService pdfExportService =
-        CharacterPdfExportService();
+    final SheetPdfService pdfExportService = SheetPdfService();
 
     final Uint8List pdfBytes = await pdfExportService.buildEditablePdf(
       characterSheet,

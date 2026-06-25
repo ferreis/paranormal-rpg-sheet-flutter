@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../controllers/character_editor_controller.dart';
+import 'package:ordem_fichas/features/characters/presentation/controllers/character_editor_controller.dart';
 
 class SaveStatusIndicator extends StatelessWidget {
   const SaveStatusIndicator({required this.status, super.key});

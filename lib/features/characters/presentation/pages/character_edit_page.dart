@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../data/repositories/character_repository.dart';
-import 'character_form_page.dart';
+import 'package:ordem_fichas/features/characters/domain/repositories/character_repository.dart';
+import 'package:ordem_fichas/features/characters/presentation/pages/character_form_page.dart';
 
 class CharacterEditPage extends StatelessWidget {
   const CharacterEditPage({
