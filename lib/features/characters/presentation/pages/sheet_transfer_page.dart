@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:ordem_fichas/features/characters/data/services/sheet_file_service.dart';
 import 'package:ordem_fichas/features/characters/data/services/sheet_qr_service.dart';
@@ -95,19 +96,20 @@ class _SheetTransferPageState extends State<SheetTransferPage> {
     return characterSheet;
   }
 
-  Future<void> _importJson() async {
+  Future<void> _importJsonContent(String jsonContent) async {
     setState(() {
       isLoading = true;
       message = null;
     });
 
     try {
-      await widget.repository.importCharacterFromJson(jsonController.text);
+      await widget.repository.importCharacterFromJson(jsonContent);
 
       if (!mounted) {
         return;
       }
 
+      jsonController.text = jsonContent;
       setState(() {
         message = 'Ficha importada.';
       });
@@ -118,6 +120,70 @@ class _SheetTransferPageState extends State<SheetTransferPage> {
 
       setState(() {
         message = 'JSON invalido ou incompleto.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _openJsonImportPage() async {
+    final String? jsonContent = await Navigator.of(context).push<String>(
+      MaterialPageRoute<String>(
+        builder: (BuildContext context) {
+          return _SheetJsonTransferPage(
+            isExportMode: false,
+            initialJsonContent: jsonController.text,
+          );
+        },
+      ),
+    );
+
+    if (!mounted || jsonContent == null) {
+      return;
+    }
+
+    await _importJsonContent(jsonContent);
+  }
+
+  Future<void> _openJsonExportPage() async {
+    setState(() {
+      isLoading = true;
+      message = null;
+    });
+
+    try {
+      final String jsonContent = await _currentJsonContent();
+      jsonController.text = jsonContent;
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) {
+            return _SheetJsonTransferPage(
+              isExportMode: true,
+              initialJsonContent: jsonContent,
+            );
+          },
+        ),
+      );
+    } catch (exception) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message = 'Não foi possível abrir o JSON da ficha.';
       });
     } finally {
       if (mounted) {
@@ -216,14 +282,14 @@ class _SheetTransferPageState extends State<SheetTransferPage> {
   }
 
   Future<void> _importQrCode() async {
-    final String? qrPayload = await Navigator.of(context).push<String>(
+    final String? jsonContent = await Navigator.of(context).push<String>(
       MaterialPageRoute<String>(
         builder: (BuildContext context) =>
             _SheetQrScannerPage(qrService: widget.qrService),
       ),
     );
 
-    if (!mounted || qrPayload == null) {
+    if (!mounted || jsonContent == null) {
       return;
     }
 
@@ -233,7 +299,6 @@ class _SheetTransferPageState extends State<SheetTransferPage> {
     });
 
     try {
-      final String jsonContent = widget.qrService.decodePayload(qrPayload);
       await widget.repository.importCharacterFromJson(jsonContent);
 
       if (!mounted) {
@@ -455,8 +520,12 @@ class _SheetTransferPageState extends State<SheetTransferPage> {
 
     try {
       final CharacterSheet characterSheet = await _loadCurrentCharacter();
-      final List<String> qrPayloads = widget.qrService.encodeJsonParts(
+      final Uint8List qrPayloadBytes = widget.qrService.encodeJsonBytes(
         await _currentJsonContent(),
+      );
+      final QrCode qrCode = QrCode.fromUint8List(
+        data: qrPayloadBytes,
+        errorCorrectLevel: QrErrorCorrectLevel.L,
       );
 
       if (!mounted) {
@@ -474,10 +543,28 @@ class _SheetTransferPageState extends State<SheetTransferPage> {
         builder: (BuildContext dialogContext) {
           return _CharacterQrCodeDialog(
             characterName: characterSheet.characterName,
-            qrPayloads: qrPayloads,
+            qrCodes: <QrCode>[qrCode],
           );
         },
       );
+    } on SheetQrPayloadTooLargeException {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message =
+            'A ficha ficou grande demais para 1 QR Code. Compartilhe como arquivo.';
+      });
+    } on InputTooLongException {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        message =
+            'A ficha ficou grande demais para 1 QR Code. Compartilhe como arquivo.';
+      });
     } catch (exception) {
       if (!mounted) {
         return;
@@ -552,6 +639,12 @@ class _SheetTransferPageState extends State<SheetTransferPage> {
                 icon: const Icon(Icons.qr_code_scanner_outlined),
                 label: const Text('Ler QR Code'),
               ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: isLoading ? null : _openJsonImportPage,
+                icon: const Icon(Icons.data_object_outlined),
+                label: const Text('Importar por JSON'),
+              ),
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 8),
@@ -574,27 +667,118 @@ class _SheetTransferPageState extends State<SheetTransferPage> {
                 icon: const Icon(Icons.share_outlined),
                 label: const Text('Compartilhar'),
               ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: isLoading ? null : _openJsonExportPage,
+                icon: const Icon(Icons.data_object_outlined),
+                label: const Text('Exportar JSON'),
+              ),
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 8),
             ],
-            TextField(
-              controller: jsonController,
-              minLines: 16,
-              maxLines: 28,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'JSON da ficha',
-              ),
-            ),
-            const SizedBox(height: 12),
-            if (!isExportMode)
-              FilledButton.icon(
-                onPressed: isLoading ? null : _importJson,
-                icon: const Icon(Icons.upload_file_outlined),
-                label: const Text('Importar ficha'),
-              ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SheetJsonTransferPage extends StatefulWidget {
+  const _SheetJsonTransferPage({
+    required this.isExportMode,
+    required this.initialJsonContent,
+  });
+
+  final bool isExportMode;
+  final String initialJsonContent;
+
+  @override
+  State<_SheetJsonTransferPage> createState() => _SheetJsonTransferPageState();
+}
+
+class _SheetJsonTransferPageState extends State<_SheetJsonTransferPage> {
+  late final TextEditingController jsonController;
+  String? message;
+
+  @override
+  void initState() {
+    super.initState();
+    jsonController = TextEditingController(text: widget.initialJsonContent);
+  }
+
+  @override
+  void dispose() {
+    jsonController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _copyJson() async {
+    await Clipboard.setData(ClipboardData(text: jsonController.text));
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      message = 'JSON copiado.';
+    });
+  }
+
+  void _submitJson() {
+    Navigator.of(context).pop(jsonController.text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isExportMode = widget.isExportMode;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(isExportMode ? 'Exportar JSON' : 'Importar JSON'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: <Widget>[
+              if (message != null) ...<Widget>[
+                Align(alignment: Alignment.centerLeft, child: Text(message!)),
+                const SizedBox(height: 8),
+              ],
+              Expanded(
+                child: TextField(
+                  controller: jsonController,
+                  expands: true,
+                  minLines: null,
+                  maxLines: null,
+                  readOnly: isExportMode,
+                  textAlignVertical: TextAlignVertical.top,
+                  style: const TextStyle(fontFamily: 'monospace'),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'JSON da ficha',
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: isExportMode
+              ? FilledButton.icon(
+                  onPressed: _copyJson,
+                  icon: const Icon(Icons.copy_outlined),
+                  label: const Text('Copiar JSON'),
+                )
+              : FilledButton.icon(
+                  onPressed: _submitJson,
+                  icon: const Icon(Icons.upload_file_outlined),
+                  label: const Text('Importar ficha'),
+                ),
         ),
       ),
     );
@@ -604,18 +788,18 @@ class _SheetTransferPageState extends State<SheetTransferPage> {
 class _CharacterQrCodeDialog extends StatelessWidget {
   const _CharacterQrCodeDialog({
     required this.characterName,
-    required this.qrPayloads,
+    required this.qrCodes,
   });
 
   final String characterName;
-  final List<String> qrPayloads;
+  final List<QrCode> qrCodes;
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       child: _CharacterQrCodeContent(
         characterName: characterName,
-        qrPayloads: qrPayloads,
+        qrCodes: qrCodes,
       ),
     );
   }
@@ -624,11 +808,11 @@ class _CharacterQrCodeDialog extends StatelessWidget {
 class _CharacterQrCodeContent extends StatefulWidget {
   const _CharacterQrCodeContent({
     required this.characterName,
-    required this.qrPayloads,
+    required this.qrCodes,
   });
 
   final String characterName;
-  final List<String> qrPayloads;
+  final List<QrCode> qrCodes;
 
   @override
   State<_CharacterQrCodeContent> createState() =>
@@ -638,7 +822,7 @@ class _CharacterQrCodeContent extends StatefulWidget {
 class _CharacterQrCodeContentState extends State<_CharacterQrCodeContent> {
   int currentPayloadIndex = 0;
 
-  bool get hasMultipleParts => widget.qrPayloads.length > 1;
+  bool get hasMultipleParts => widget.qrCodes.length > 1;
 
   void _showPreviousPart() {
     if (currentPayloadIndex == 0) {
@@ -651,7 +835,7 @@ class _CharacterQrCodeContentState extends State<_CharacterQrCodeContent> {
   }
 
   void _showNextPart() {
-    if (currentPayloadIndex == widget.qrPayloads.length - 1) {
+    if (currentPayloadIndex == widget.qrCodes.length - 1) {
       return;
     }
 
@@ -664,7 +848,7 @@ class _CharacterQrCodeContentState extends State<_CharacterQrCodeContent> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final int currentPart = currentPayloadIndex + 1;
-    final int partCount = widget.qrPayloads.length;
+    final int partCount = widget.qrCodes.length;
 
     return SizedBox(
       width: 320,
@@ -701,10 +885,8 @@ class _CharacterQrCodeContentState extends State<_CharacterQrCodeContent> {
               ),
               child: SizedBox.square(
                 dimension: 260,
-                child: QrImageView(
-                  data: widget.qrPayloads[currentPayloadIndex],
-                  version: QrVersions.auto,
-                  errorCorrectionLevel: QrErrorCorrectLevel.L,
+                child: QrImageView.withQr(
+                  qr: widget.qrCodes[currentPayloadIndex],
                   size: 260,
                   padding: const EdgeInsets.all(12),
                   backgroundColor: Colors.white,
@@ -798,6 +980,14 @@ class _SheetQrScannerPageState extends State<_SheetQrScannerPage> {
     }
 
     for (final Barcode barcode in barcodeCapture.barcodes) {
+      final Uint8List? qrPayloadBytes = _barcodeDecodedBytes(barcode);
+
+      if (qrPayloadBytes != null &&
+          widget.qrService.canDecodePayloadBytes(qrPayloadBytes)) {
+        _handleBinaryPayload(qrPayloadBytes);
+        return;
+      }
+
       final String? qrPayload = barcode.rawValue;
 
       if (qrPayload == null || qrPayload.trim().isEmpty) {
@@ -806,6 +996,36 @@ class _SheetQrScannerPageState extends State<_SheetQrScannerPage> {
 
       _handlePayload(qrPayload);
       return;
+    }
+  }
+
+  Uint8List? _barcodeDecodedBytes(Barcode barcode) {
+    final BarcodeBytes? rawDecodedBytes = barcode.rawDecodedBytes;
+
+    if (rawDecodedBytes is DecodedBarcodeBytes) {
+      return rawDecodedBytes.bytes;
+    }
+
+    if (rawDecodedBytes is DecodedVisionBarcodeBytes) {
+      return rawDecodedBytes.bytes ?? rawDecodedBytes.rawBytes;
+    }
+
+    return null;
+  }
+
+  void _handleBinaryPayload(Uint8List qrPayloadBytes) {
+    try {
+      final String jsonContent = widget.qrService.decodePayloadBytes(
+        qrPayloadBytes,
+      );
+
+      scanHandled = true;
+      scannerController.stop();
+      Navigator.of(context).pop(jsonContent);
+    } on FormatException {
+      setState(() {
+        scanMessage = 'QR Code inválido para ficha.';
+      });
     }
   }
 
@@ -822,9 +1042,17 @@ class _SheetQrScannerPageState extends State<_SheetQrScannerPage> {
     }
 
     if (qrPart == null) {
-      scanHandled = true;
-      scannerController.stop();
-      Navigator.of(context).pop(qrPayload);
+      try {
+        final String jsonContent = widget.qrService.decodePayload(qrPayload);
+
+        scanHandled = true;
+        scannerController.stop();
+        Navigator.of(context).pop(jsonContent);
+      } on FormatException {
+        setState(() {
+          scanMessage = 'QR Code inválido para ficha.';
+        });
+      }
       return;
     }
 
@@ -844,7 +1072,8 @@ class _SheetQrScannerPageState extends State<_SheetQrScannerPage> {
       final String joinedPayload = widget.qrService.joinPayloadParts(
         scannedPayloadsByIndex.values,
       );
-      Navigator.of(context).pop(joinedPayload);
+      final String jsonContent = widget.qrService.decodePayload(joinedPayload);
+      Navigator.of(context).pop(jsonContent);
       return;
     }
 

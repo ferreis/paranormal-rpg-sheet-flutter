@@ -2,32 +2,54 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
+import 'package:ordem_fichas/features/characters/data/services/sheet_qr_payload_codec.dart';
 
 class SheetQrService {
-  static const String payloadPrefix = 'ordemficha:v1:';
+  static const String payloadPrefix = 'OFB1:';
+  static const String compactJsonPayloadPrefix = 'OFZ1:';
+  static const String legacyPayloadPrefix = 'ordemficha:v1:';
   static const String multipartPrefix = 'ordemficha:v2:';
-  static const int maxQrPayloadLength = 1800;
+  static const int maxQrPayloadByteLength = 2953;
+  static const int legacyMaxQrPayloadLength = 1800;
+  static const SheetQrPayloadCodec _payloadCodec = SheetQrPayloadCodec();
+  static final Uint8List _binaryPayloadMagic = Uint8List.fromList(
+    ascii.encode('OFB1'),
+  );
 
-  String encodeJson(String jsonContent) {
-    final String compactJson = _compactJson(jsonContent);
-    final Uint8List jsonBytes = Uint8List.fromList(utf8.encode(compactJson));
-    final Uint8List gzipBytes = const GZipEncoder().encodeBytes(
-      jsonBytes,
+  Uint8List encodeJsonBytes(String jsonContent) {
+    final Uint8List payloadBytes = _payloadCodec.encodeBytes(jsonContent);
+    final Uint8List compressedFileBytes = const ZLibEncoder().encodeBytes(
+      payloadBytes,
       level: 9,
     );
+    final Uint8List qrPayloadBytes = Uint8List.fromList(<int>[
+      ..._binaryPayloadMagic,
+      ...compressedFileBytes,
+    ]);
 
-    return '$payloadPrefix${base64Url.encode(gzipBytes)}';
+    if (qrPayloadBytes.length > maxQrPayloadByteLength) {
+      throw SheetQrPayloadTooLargeException(
+        payloadLength: qrPayloadBytes.length,
+        maxPayloadLength: maxQrPayloadByteLength,
+      );
+    }
+
+    return qrPayloadBytes;
+  }
+
+  String encodeJson(String jsonContent) {
+    return '$compactJsonPayloadPrefix${base64Url.encode(encodeJsonBytes(jsonContent))}';
   }
 
   List<String> encodeJsonParts(String jsonContent) {
-    final String encodedPayload = encodeJson(jsonContent);
+    final String encodedPayload = _encodeLegacyGzipPayload(jsonContent);
 
-    if (encodedPayload.length <= maxQrPayloadLength) {
+    if (encodedPayload.length <= legacyMaxQrPayloadLength) {
       return <String>[encodedPayload];
     }
 
     final String encodedContent = encodedPayload.substring(
-      payloadPrefix.length,
+      legacyPayloadPrefix.length,
     );
     final String payloadId = _payloadId(encodedContent);
     final List<String> contentChunks = _splitContent(encodedContent);
@@ -46,17 +68,73 @@ class SheetQrService {
       return decodePayload(joinPayloadParts(<String>[normalizedPayload]));
     }
 
-    if (!normalizedPayload.startsWith(payloadPrefix)) {
-      return normalizedPayload;
+    if (normalizedPayload.startsWith(payloadPrefix)) {
+      return decodePayloadBytes(Uint8List.fromList(latin1.encode(qrPayload)));
     }
 
-    final String encodedContent = normalizedPayload.substring(
-      payloadPrefix.length,
-    );
-    final Uint8List gzipBytes = base64Url.decode(encodedContent);
-    final Uint8List jsonBytes = const GZipDecoder().decodeBytes(gzipBytes);
+    if (normalizedPayload.startsWith(compactJsonPayloadPrefix)) {
+      final String encodedContent = normalizedPayload.substring(
+        compactJsonPayloadPrefix.length,
+      );
+      final Uint8List encodedBytes = base64Url.decode(encodedContent);
 
-    return utf8.decode(jsonBytes);
+      if (_hasBinaryPayloadMagic(encodedBytes)) {
+        return decodePayloadBytes(encodedBytes);
+      }
+
+      final Uint8List jsonBytes = const ZLibDecoder().decodeBytes(encodedBytes);
+
+      return _payloadCodec.decodeCompactJson(utf8.decode(jsonBytes));
+    }
+
+    if (normalizedPayload.startsWith(legacyPayloadPrefix)) {
+      final String encodedContent = normalizedPayload.substring(
+        legacyPayloadPrefix.length,
+      );
+      final Uint8List gzipBytes = base64Url.decode(encodedContent);
+      final Uint8List jsonBytes = const GZipDecoder().decodeBytes(gzipBytes);
+
+      return utf8.decode(jsonBytes);
+    }
+
+    return normalizedPayload;
+  }
+
+  bool canDecodePayloadBytes(Uint8List qrPayloadBytes) {
+    return _hasBinaryPayloadMagic(qrPayloadBytes);
+  }
+
+  String decodePayloadBytes(Uint8List qrPayloadBytes) {
+    if (!_hasBinaryPayloadMagic(qrPayloadBytes)) {
+      throw const FormatException('QR Code binário de ficha inválido.');
+    }
+
+    final Uint8List compressedFileBytes = qrPayloadBytes.sublist(
+      _binaryPayloadMagic.length,
+    );
+    final Uint8List payloadBytes = const ZLibDecoder().decodeBytes(
+      compressedFileBytes,
+    );
+
+    return _payloadCodec.decodeBytes(payloadBytes);
+  }
+
+  bool _hasBinaryPayloadMagic(Uint8List qrPayloadBytes) {
+    if (qrPayloadBytes.length <= _binaryPayloadMagic.length) {
+      return false;
+    }
+
+    for (
+      int byteIndex = 0;
+      byteIndex < _binaryPayloadMagic.length;
+      byteIndex++
+    ) {
+      if (qrPayloadBytes[byteIndex] != _binaryPayloadMagic[byteIndex]) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   SheetQrPart? parsePart(String qrPayload) {
@@ -134,7 +212,18 @@ class SheetQrService {
       throw const FormatException('QR Code corrompido.');
     }
 
-    return '$payloadPrefix$encodedContent';
+    return '$legacyPayloadPrefix$encodedContent';
+  }
+
+  String _encodeLegacyGzipPayload(String jsonContent) {
+    final String compactJson = _compactJson(jsonContent);
+    final Uint8List jsonBytes = Uint8List.fromList(utf8.encode(compactJson));
+    final Uint8List gzipBytes = const GZipEncoder().encodeBytes(
+      jsonBytes,
+      level: 9,
+    );
+
+    return '$legacyPayloadPrefix${base64Url.encode(gzipBytes)}';
   }
 
   String _compactJson(String jsonContent) {
@@ -151,9 +240,9 @@ class SheetQrService {
     for (
       int startIndex = 0;
       startIndex < encodedContent.length;
-      startIndex += maxQrPayloadLength
+      startIndex += legacyMaxQrPayloadLength
     ) {
-      final int endIndex = startIndex + maxQrPayloadLength;
+      final int endIndex = startIndex + legacyMaxQrPayloadLength;
       contentChunks.add(
         encodedContent.substring(
           startIndex,
@@ -169,6 +258,22 @@ class SheetQrService {
     final int checksum = getCrc32(utf8.encode(encodedContent));
 
     return checksum.toRadixString(16).padLeft(8, '0');
+  }
+}
+
+class SheetQrPayloadTooLargeException implements Exception {
+  const SheetQrPayloadTooLargeException({
+    required this.payloadLength,
+    required this.maxPayloadLength,
+  });
+
+  final int payloadLength;
+  final int maxPayloadLength;
+
+  @override
+  String toString() {
+    return 'SheetQrPayloadTooLargeException: payloadLength=$payloadLength, '
+        'maxPayloadLength=$maxPayloadLength';
   }
 }
 
